@@ -1,0 +1,25 @@
+# SupplyChainManagementSystem
+
+Welcome to the **SupplyChainManagementSystem** project! My name is **Asoh Yannick**, and I am a passionate PERN stack software developer. This innovative project aims to streamline supply chain management and enhance operational efficiency for businesses of all sizes.
+
+In this project, we leverage the powerful combination of Node.js, Express.js, PostgreSQL, and TypeScript to build a robust backend system that can handle various aspects of supply chain management. We also utilize JSON Web Tokens (JWT) for secure user authentication and authorization.
+
+### Join Me!
+
+I invite programmers, developers, and coders from around the world to join me on this exciting journey. Your contributions can help shape the future of supply chain management, improving processes and creating value for organizations globally. Whether you're interested in backend development, API design, or anything in between, there's a place for you in this project!
+
+### API Endpoints
+
+Here are some of the key API endpoints you will be working with:
+
+- **User Management**: Register, login, and manage users.
+- **Product Management**: Create, read, update, and delete products.
+- **Supplier Management**: Manage supplier information and relationships.
+- **Inventory Management**: Track and manage inventory levels.
+- **Order Management**: Handle order creation, updates, and cancellations.
+- **Shipping Management**: Manage shipping details and statuses.
+- **Payment Management**: Process and manage payments effectively.
+- **Reports**: Generate insightful reports for informed decision-making.
+- **Notifications**: Stay informed with timely alerts.
+
+Let's work together to build something amazing!
