@@ -3,54 +3,89 @@ import { StatusCodes } from "http-status-codes";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import User from "../../../entity/userEntity/userEntity";
+
 const createAccount = async(req: Request, res: Response): Promise<Response> => {
     const { firstName, lastName, email, password } = req.body;
     try {
-        const user =  await User.findOne({where: { email }});
-        if (user) {
-            user.refreshToken = '';
-            await user.save();
+        if (firstName.length > 100) {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 success: false,
-                message: "User already exist!",
+                message: "First name cannot exceed 100 characters",
+            });
+        }
+        if (lastName.length > 100) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Last name cannot exceed 100 characters",
+            });
+        }
+        if (email.length > 255) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Email cannot exceed 255 characters",
+            });
+        }
+        const user = await User.findOne({where: { email }});
+        if (user) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "User already exists!",
             });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({
+        const newUser = await User.create({
             firstName,
             lastName,
             email,
-            password:hashedPassword,
+            password: hashedPassword,
             isAdmin: true,
         });
-        await newUser.save();
-        const accessToken = jwt.sign({id: newUser.id, firstName: newUser.firstName, lastName:newUser.lastName, email:newUser.email, password: newUser.password, isAdmin:newUser.isAdmin}, process.env.JWT_SECRET_KEY as string, {
-            expiresIn: '20m',
-        })
-        const refreshToken = jwt.sign({id: newUser.id, firstName: newUser.firstName, lastName:newUser.lastName, email:newUser.email, password: newUser.password, isAdmin:newUser.isAdmin}, process.env.JWT_SECRET_KEY as string, {
-            expiresIn: '7d',
-        });
-        newUser.refreshToken = refreshToken;
-        await newUser.save();
+        const payload = {
+            id: newUser.id,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            email: newUser.email,
+            isAdmin: newUser.isAdmin
+        };
+        const accessToken = jwt.sign(
+            payload, 
+            process.env.JWT_SECRET_KEY as string, 
+            { expiresIn: '20m' }
+        );
+        const refreshToken = jwt.sign(
+            payload,
+            process.env.JWT_SECRET_KEY as string,
+            { expiresIn: '7d' }
+        );
+        // Update refresh token
+        await newUser.update({ refreshToken });
         res.cookie('auth', accessToken, {
             httpOnly: true,
-            maxAge: 90000,
+            maxAge: 20 * 60 * 1000, // 20 minutes
             sameSite: 'strict',
-            secure: process.env.NODE_ENV as string === 'production',
+            secure: process.env.NODE_ENV === 'production',
         });
+        // Create safe user response without sensitive data
+        const safeUser = {
+            id: newUser.id,
+            firstName: newUser.firstName,
+            lastName: newUser.lastName,
+            email: newUser.email,
+            isAdmin: newUser.isAdmin,
+        };
         return res.status(StatusCodes.CREATED).json({
             success: true,
-            message: "User registration is successful!",
+            message: "User registration successful!",
             accessToken,
             refreshToken,
-            newUser
+            user: safeUser
         });
     } catch (error) {
-        console.error("Error occured!", error);
+        console.error("Registration error:", error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: "Something went wrong!",
-            error: error instanceof Error ? error.message : "Unknown Error Message",
+            message: "Registration failed",
+            error: error instanceof Error ? error.message : "Unknown error"
         });
     }
 }
