@@ -20,15 +20,15 @@ User.init({
         primaryKey: true,
     },
     firstName: {
-        type: DataTypes.STRING(100), // Added length limit
+        type: DataTypes.STRING(100),
         allowNull: false,
     },
     lastName: {
-        type: DataTypes.STRING(100), // Added length limit
+        type: DataTypes.STRING(100), 
         allowNull: false,
     },
     email: {
-        type: DataTypes.STRING(255), // Explicit length
+        type: DataTypes.STRING(255), 
         allowNull: false,
         unique: true,
         validate: {
@@ -36,7 +36,7 @@ User.init({
         }
     },
     password: {
-        type: DataTypes.STRING(1024), // Increased for hashed passwords
+        type: DataTypes.STRING(1024), 
         allowNull: false,
     },
     isAdmin: {
@@ -45,7 +45,7 @@ User.init({
         defaultValue: false,
     },
     refreshToken: {
-        type: DataTypes.TEXT, // Changed to TEXT for long values
+        type: DataTypes.TEXT, 
     }
 }, {
     sequelize,

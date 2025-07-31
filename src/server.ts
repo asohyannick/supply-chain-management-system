@@ -11,6 +11,7 @@ import userRoute from './controller/user/user.controller';
 import notFound from './middleware/notFound/notFound';
 import backendError from './middleware/serverError/backendError';
 const app: Application = express();
+app.set('trust proxy', 1); 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const APP_NAME: string = process.env.APP_NAME || 'SupplyChainManagementSystem';
